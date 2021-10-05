@@ -23,4 +23,20 @@ router.get('/:id', checkCarId, async (req, res, next) => {
     }
 });
 
+router.post('/', checkCarPayload, checkVinNumberValid, checkVinNumberUnique, async (req, res, next) => {
+    try {
+        const newCar = await Cars.create(req.validatedCar)
+        res.status(201).json(newCar)
+    }
+    catch (err) {
+        next(err)
+    }
+});
+
+router.use((err, req, res, next) => { // eslint-disable-line
+    res.status(err.status || 500).json({
+      message: err.message
+    })
+  })
+
 module.exports = router
